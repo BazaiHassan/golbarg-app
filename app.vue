@@ -1,11 +1,11 @@
 <template>
-  <main class="irSans" :style="{backgroundColor: bgColor}">
+  <main class="irSans">
     <NuxtPage />
   </main>
 </template>
 
 <script setup lang="ts">
-const bgColor = ref("#EAFFE4")
+
 </script>
 
 <style>

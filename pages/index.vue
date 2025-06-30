@@ -20,11 +20,17 @@
      <div class="mt-32">
         <Hero />
      </div>
+
+     <!-- Slider -->
+      <div class="flex justify-center mt-16">
+        <ProductSlider />
+      </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Navbar from "~/components/Navbar.vue";
+import ProductSlider from "~/components/ProductSlider.vue";
 </script>
 
 <style scoped></style>
