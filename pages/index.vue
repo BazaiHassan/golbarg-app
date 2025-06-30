@@ -9,7 +9,7 @@
         <SearchBar />
       </div>
       <div class="flex w-1/3 justify-end items-center p-2">
-        <AccountBar />
+        <Login />
       </div>
     </div>
     <!-- navbar -->
