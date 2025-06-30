@@ -8,7 +8,7 @@ import p3 from "@/assets/images/p_3.png";
 import p4 from "@/assets/images/p_4.jpg";
 import p5 from "@/assets/images/p_5.jpg";
 
-const imageList = [p1, p2, p3, p4, p5]; // Remove ref() since these are static imports
+const imageList = [p1, p2, p3];
 
 const plugin = ref(Autoplay({
   delay: 2000,
