@@ -143,7 +143,7 @@ const closeMobileMenu = () => {
       >
         <div class="p-4 border-b">
           <div class="flex justify-between items-center">
-            <h2 class="irSans text-lg font-semibold">منو</h2>
+            <Logo />
             <button
               @click="closeMobileMenu"
               class="p-2 rounded-md hover:bg-gray-100 transition-colors"
