@@ -37,6 +37,10 @@
       </div>
     </div>
 
+    <!-- Ai Hero -->
+    <div>
+      <AiHero />
+    </div>
     <!-- Footer Spacer -->
     <div class="flex-grow"></div>
   </div>
