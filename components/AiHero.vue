@@ -113,11 +113,12 @@
                             برای تشخیص بیماری گیاهان
                         </span>
                     </div>
-                    <Button class="bg-green-600 cursor-pointer hover:bg-green-800 text-white px-8 py-4 md:px-10 md:py-5 rounded-lg shadow-lg transition duration-300 w-full max-w-xs">
-                        <span class="text-white text-base md:text-lg font-semibold">
-                            شروع کن
-                        </span>
-                    </Button>
+                    
+                    <NuxtLink to="/golbarg-ai" class="bg-green-600 cursor-pointer hover:bg-green-800 text-white px-8 py-4 md:px-10 md:py-5 rounded-lg shadow-lg transition duration-300 w-full max-w-xs">
+                            <span class="text-white text-base md:text-lg font-semibold">
+                                شروع کن
+                            </span>
+                    </NuxtLink>
                 </div>
             </div>
 
@@ -126,5 +127,6 @@
 </template>
 
 <script setup lang="ts">
-// No imports needed since we're using direct paths in template
+
+
 </script>
