@@ -5,6 +5,20 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
   css: ["~/assets/css/tailwind.css","~/assets/css/fonts.css"],
+  nitro: {
+    preset:"cloudflare-pages",
+    experimental:{
+      database:true
+    },
+    database:{
+      golbargDB:{
+        connector:"cloudflare-d1",
+        options:{
+          bindingName:"golbargai-db-link"
+        }
+      }
+    }
+  },
   vite: {
     plugins: [
       tailwindcss(),
