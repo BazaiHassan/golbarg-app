@@ -235,7 +235,7 @@ onMounted(() => {
               ></textarea>
             </div>
 
-            <div class="md:col-span-2 flex justify-start space-x-3 space-x-reverse">
+            <div class="md:col-span-2 flex justify-start gap-4">
               <button
                 type="submit"
                 :disabled="submitLoading"
@@ -293,7 +293,7 @@ onMounted(() => {
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td class="flex gap-2 px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button class="text-blue-600 hover:text-blue-900 mr-4">ویرایش</button>
                     <button class="text-red-600 hover:text-red-900">حذف</button>
                   </td>
