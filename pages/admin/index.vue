@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, reactive } from 'vue'
+import { toast } from 'vue-sonner'
 
 interface Product {
   id: number
@@ -91,6 +92,21 @@ const addProduct = async () => {
     submitLoading.value = false
   }
 }
+
+// Delete product
+const deleteProduct = async (productId: number) => {
+    $fetch(`/api/product/${productId}`, {
+      method: 'DELETE'
+    })
+    .then((response: any) => {
+      if (response.status === 'success') {
+        toast.success(response.message || 'محصول با موفقیت حذف شد')
+        fetchProducts() // Refresh the product list
+      } else {
+        showMessage(response.message || 'خطا در حذف محصول', 'error')
+      }
+    })
+  }
 
 // Reset form
 const resetForm = () => {
@@ -295,7 +311,7 @@ onMounted(() => {
                 <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50">
                   <td class="flex gap-2 px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button class="text-blue-600 hover:text-blue-900 mr-4">ویرایش</button>
-                    <button class="text-red-600 hover:text-red-900">حذف</button>
+                    <button @click="deleteProduct(product.id)" class="text-red-600 hover:text-red-900">حذف</button>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                     {{ formatDate(product.created_at) }}

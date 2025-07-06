@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 500);
         return {
             status: 'error',
-            message: 'خطای سرور: ' + error.message,
+            message: 'خطای سرور: ',
         };
     }
 });
