@@ -46,6 +46,9 @@ export default defineEventHandler(async (event) => {
     return {
         status: 'success',
         message: 'ثبت نام با موفقیت انجام شد',
+        data:{
+            token: addNewUser.rows[0].token,
+        }
     };
 
 

@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+definePageMeta({
+  middleware:["check-auth-middleware"]
+})
+
 import { ref, computed } from 'vue';
 import { Upload, Camera, Leaf, AlertCircle, CheckCircle, Lightbulb, Droplets, Sun, Heart, Shield } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';

@@ -16,7 +16,7 @@
       
       <!-- Login Section -->
       <div class="flex w-full sm:w-1/3 justify-center sm:justify-end items-center order-2 sm:order-3">
-        <Login />
+        <Auth />
       </div>
     </div>
 

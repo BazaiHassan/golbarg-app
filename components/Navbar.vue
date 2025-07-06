@@ -42,7 +42,7 @@ const closeMobileMenu = () => {
           <!-- Plant Disease Detection -->
           <NavigationMenuItem>
             <NavigationMenuLink class="px-4 py-2 hover:text-primary transition-colors">
-              <NuxtLink to="#" class="block">
+              <NuxtLink to="/golbarg-ai" class="block">
                 <span class="irSans text-xl">
                   تشخیص بیماری گیاه
                 </span>
