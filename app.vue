@@ -1,11 +1,16 @@
 <template>
   <main class="irSans">
     <NuxtPage />
+     <!-- Nuxt  -->
+
+    <Toaster dir="rtl" class="pointer-events-auto" />
+
   </main>
 </template>
 
 <script setup lang="ts">
-
+import 'vue-sonner/style.css'
+import { Toaster } from 'vue-sonner'
 </script>
 
 <style>

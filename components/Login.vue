@@ -11,13 +11,21 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "lucide-vue-next";
+import { Loader2, User } from "lucide-vue-next";
+import { toast } from 'vue-sonner'
 
 const phoneNumber = ref("");
 const password = ref("");
 const email = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
+const isLoading = ref(false);
 
 function handleRegister(){
+  isLoading.value = true;
+  errorMessage.value = "";
+  successMessage.value = "";
+
   $fetch("/api/register", {
     method: "POST",
     body: {
@@ -25,7 +33,50 @@ function handleRegister(){
       phone: phoneNumber.value,
       password: password.value,
     },
+  }).then((response) => {
+    if (response && response.status === "success") {
+      // Handle successful registration
+      successMessage.value = "ثبت نام با موفقیت انجام شد.";
+      toast.success(successMessage.value, {
+        position: 'top-right',
+        duration: 3000,
+      });
+
+      // reload window to reflect changes
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+
+    } else if (response) {
+      // Handle registration error
+      errorMessage.value = response.message || "ثبت نام ناموفق بود.";
+      toast.error(errorMessage.value, {
+        position: 'top-right',
+        duration: 3000,
+      });
+    isLoading.value = false;
+
+    } else {
+      // Handle undefined response
+      
+      errorMessage.value = "خطا در ارتباط با سرور.";
+      toast.error(errorMessage.value, {
+        position: 'top-right',
+        duration: 3000,
+      });
+    isLoading.value = false;
+
+    }
   })
+  .catch((error) => {
+    // Handle network or other errors
+    errorMessage.value = "خطا در ارتباط با سرور: " + error.message;
+    toast.error(errorMessage.value, {
+      position: 'top-right',
+      duration: 3000,
+    });
+    isLoading.value = false;
+  });
 }
 </script>
 
@@ -38,7 +89,10 @@ function handleRegister(){
           <User class="cursor-pointer" />
         </Button>
       </DialogTrigger>
-      <DialogContent class="sm:max-w-[425px] rtl-content">
+      <DialogContent class="sm:max-w-[425px] rtl-content" @interact-outside="event => {
+        const target = event.target as HTMLElement;
+        if (target?.closest('[data-sonner-toaster]')) return event.preventDefault()
+      }">
         <DialogHeader class="text-right">
           <DialogTitle class="text-center">
             <span class="irSans">ثبت نام / ورود</span>
@@ -89,7 +143,8 @@ function handleRegister(){
           </div>
         </div>
         <DialogFooter class="rtl-footer">
-          <Button @click="handleRegister">
+          <Button :disabled="isLoading" @click="handleRegister">
+            <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin" />
             <span class="irSans">ارسال</span>
           </Button>
         </DialogFooter>
