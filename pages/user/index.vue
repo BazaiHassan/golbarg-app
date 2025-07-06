@@ -161,7 +161,7 @@ const getStatusIcon = (status: string) => {
 // Logout
 const logout = () => {
   // Implement logout logic here
- token
+ token.value = null
   // Redirect to home or login page
   window.location.href = '/'
 }
@@ -183,7 +183,7 @@ const logout = () => {
               <p class="text-sm text-gray-500">خوش آمدید، {{ user.name }}</p>
             </div>
           </div>
-          <div class="flex irSans items-center space-x-reverse space-x-4">
+          <div class="flex irSans items-center space-x-reverse gap-3">
             <NuxtLink to="/">
                 <Button variant="outline" size="sm">
                   <User class="h-4 w-4 ml-2" />
