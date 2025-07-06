@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     const addNewProduct = await db.sql`
         INSERT INTO products (title, price, description,image_url, created_at) 
         VALUES (${requestBody.title}, ${requestBody.price}, ${requestBody.description},${requestBody.image_url}, ${new Date().toISOString()})
-        RETURNING id, title, price, image_url, description
+        RETURNING id, title, price, description, image_url
     `;
 
     // Check if the insertion was successful

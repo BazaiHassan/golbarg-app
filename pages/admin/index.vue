@@ -43,7 +43,9 @@ interface ProductsApiResponse {
 const fetchProducts = async () => {
   loading.value = true
   try {
-    const response = await $fetch('/api/allProducts')
+    const response = await $fetch('/api/products', {
+      method: 'GET'
+    })
     const typedResponse = response as ProductsApiResponse
     if (typedResponse.status === 'success') {
       products.value = typedResponse.data
@@ -66,7 +68,7 @@ const addProduct = async () => {
 
   submitLoading.value = true
   try {
-    const response = await $fetch<ProductsApiResponse>('/api/addProduct', {
+    const response = await $fetch<ProductsApiResponse>('/api/product', {
       method: 'POST',
       body: {
         title: productForm.title,
@@ -102,6 +104,7 @@ const resetForm = () => {
 const showMessage = (msg: string, type: 'success' | 'error') => {
   message.value = msg
   messageType.value = type
+  console.log(`Message: ${msg}, Type: ${type}`)
   setTimeout(() => {
     message.value = ''
   }, 5000)
@@ -218,7 +221,7 @@ onMounted(() => {
                 v-model="productForm.image_url"
                 type="url"
                 class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="https://example.com/image.jpg"
+                placeholder=""
               />
             </div>
 
