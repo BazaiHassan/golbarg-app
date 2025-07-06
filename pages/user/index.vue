@@ -233,7 +233,7 @@ const logout = () => {
             <Calendar class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div class="text-2xl font-bold">{{ user.joinDate }}</div>
+            <div class="text-2xl irSans font-bold">{{ user.joinDate }}</div>
             <p class="text-xs irSans text-muted-foreground">تاریخ عضویت</p>
           </CardContent>
         </Card>
@@ -290,7 +290,7 @@ const logout = () => {
         </TabsContent>
 
         <!-- Payments Tab -->
-        <TabsContent value="payments" class="space-y-4">
+        <TabsContent value="payments" class="irSans space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>تاریخچه پرداخت‌ها</CardTitle>
