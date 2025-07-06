@@ -127,12 +127,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <div class="min-h-screen bg-gray-50 p-6" dir="rtl">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">پنل مدیریت</h1>
-        <p class="text-gray-600 mt-2">مدیریت محصولات و سایر بخش‌ها</p>
+        <h1 class="text-3xl font-bold text-gray-900 text-right">پنل مدیریت</h1>
+        <p class="text-gray-600 mt-2 text-right">مدیریت محصولات و سایر بخش‌ها</p>
       </div>
 
       <!-- Tabs -->
@@ -180,7 +180,7 @@ onMounted(() => {
       <div v-if="message" class="mb-6">
         <div
           :class="[
-            'rounded-md p-4',
+            'rounded-md p-4 text-right',
             messageType === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
           ]"
         >
@@ -192,57 +192,50 @@ onMounted(() => {
       <div v-if="activeTab === 'products'" class="space-y-6">
         <!-- Add Product Form -->
         <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">افزودن محصول جدید</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4 text-right">افزودن محصول جدید</h2>
           
           <form @submit.prevent="addProduct" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">عنوان محصول</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1 text-right">عنوان محصول</label>
               <input
                 v-model="productForm.title"
                 type="text"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
                 placeholder="نام محصول را وارد کنید"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">قیمت (تومان)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1 text-right">قیمت (تومان)</label>
               <input
                 v-model.number="productForm.price"
                 type="number"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
                 placeholder="قیمت را وارد کنید"
               />
             </div>
 
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1">URL تصویر</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1 text-right">URL تصویر</label>
               <input
                 v-model="productForm.image_url"
                 type="url"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder=""
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
+                placeholder="آدرس تصویر را وارد کنید"
               />
             </div>
 
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1 text-right">توضیحات</label>
               <textarea
                 v-model="productForm.description"
                 rows="3"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
                 placeholder="توضیحات محصول را وارد کنید"
               ></textarea>
             </div>
 
-            <div class="md:col-span-2 flex justify-end space-x-3 space-x-reverse">
-              <button
-                type="button"
-                @click="resetForm"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                پاک کردن
-              </button>
+            <div class="md:col-span-2 flex justify-start space-x-3 space-x-reverse">
               <button
                 type="submit"
                 :disabled="submitLoading"
@@ -251,6 +244,13 @@ onMounted(() => {
                 <span v-if="submitLoading">در حال افزودن...</span>
                 <span v-else>افزودن محصول</span>
               </button>
+              <button
+                type="button"
+                @click="resetForm"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                پاک کردن
+              </button>
             </div>
           </form>
         </div>
@@ -258,7 +258,7 @@ onMounted(() => {
         <!-- Products List -->
         <div class="bg-white rounded-lg shadow">
           <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-900">لیست محصولات</h2>
+            <h2 class="text-xl font-semibold text-gray-900 text-right">لیست محصولات</h2>
           </div>
 
           <div v-if="loading" class="p-6 text-center">
@@ -275,44 +275,44 @@ onMounted(() => {
               <thead class="bg-gray-50">
                 <tr>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    تصویر
-                  </th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    عنوان
-                  </th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    قیمت
+                    عملیات
                   </th>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     تاریخ ایجاد
                   </th>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    عملیات
+                    قیمت
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    عنوان
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    تصویر
                   </th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-blue-600 hover:text-blue-900 mr-4">ویرایش</button>
+                    <button class="text-red-600 hover:text-red-900">حذف</button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                    {{ formatDate(product.created_at) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                    {{ formatPrice(product.price) }} تومان
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="text-sm font-medium text-gray-900">{{ product.title }}</div>
+                    <div class="text-sm text-gray-500 truncate max-w-xs">{{ product.description }}</div>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <img
                       :src="product.image_url"
                       :alt="product.title"
                       class="h-12 w-12 rounded-lg object-cover"
                     />
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="text-sm font-medium text-gray-900">{{ product.title }}</div>
-                    <div class="text-sm text-gray-500 truncate max-w-xs">{{ product.description }}</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ formatPrice(product.price) }} تومان
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatDate(product.created_at) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button class="text-blue-600 hover:text-blue-900 ml-4">ویرایش</button>
-                    <button class="text-red-600 hover:text-red-900">حذف</button>
                   </td>
                 </tr>
               </tbody>
@@ -323,18 +323,27 @@ onMounted(() => {
 
       <!-- Other Tabs (Placeholder) -->
       <div v-else-if="activeTab === 'categories'" class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">دسته‌بندی‌ها</h2>
-        <p class="text-gray-600">این بخش به زودی اضافه خواهد شد.</p>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 text-right">دسته‌بندی‌ها</h2>
+        <p class="text-gray-600 text-right">این بخش به زودی اضافه خواهد شد.</p>
       </div>
 
       <div v-else-if="activeTab === 'orders'" class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">سفارشات</h2>
-        <p class="text-gray-600">این بخش به زودی اضافه خواهد شد.</p>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4 text-right">سفارشات</h2>
+        <p class="text-gray-600 text-right">این بخش به زودی اضافه خواهد شد.</p>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="postcss" scoped>
-/* Custom styles if needed */
+/* RTL specific styles */
+input[type="number"] {
+  direction: ltr;
+  text-align: right;
+}
+
+input[type="url"] {
+  direction: ltr;
+  text-align: right;
+}
 </style>
