@@ -95,7 +95,7 @@ const addProduct = async () => {
 
 // Delete product
 const deleteProduct = async (productId: number) => {
-    $fetch(`/api/product/delete?id=${productId}`, {
+    $fetch(`/api/product?id=${productId}`, {
       method: 'DELETE'
     })
     .then((response: any) => {
