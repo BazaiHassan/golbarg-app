@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+
+definePageMeta({
+    middleware:["check-auth-middleware"]
+})
+
 import { ref, computed } from 'vue'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +24,8 @@ import {
   TrendingUp,
   Eye
 } from 'lucide-vue-next'
+
+const token = useCookie('token')
 
 // Mock data for orders
 const orders = ref([
@@ -150,6 +157,14 @@ const getStatusIcon = (status: string) => {
       return Clock
   }
 }
+
+// Logout
+const logout = () => {
+  // Implement logout logic here
+ token
+  // Redirect to home or login page
+  window.location.href = '/'
+}
 </script>
 
 <template>
@@ -175,6 +190,12 @@ const getStatusIcon = (status: string) => {
                   بازگشت به خانه
                 </Button>
             </NuxtLink>
+                        
+                <Button @click="logout" variant="destructive" size="sm">
+                  <User class="h-4 w-4 ml-2" />
+                  خروج از حساب
+                </Button>
+         
           </div>
         </div>
       </div>
