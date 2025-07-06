@@ -3,7 +3,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { toast } from 'vue-sonner'
 
 interface Product {
-  id: number
+  ID: number
   title: string
   price: number
   description: string
