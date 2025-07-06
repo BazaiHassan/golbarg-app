@@ -308,10 +308,10 @@ onMounted(() => {
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50">
+                <tr v-for="product in products" :key="product.ID" class="hover:bg-gray-50">
                   <td class="flex gap-2 px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button class="text-blue-600 hover:text-blue-900 mr-4">ویرایش</button>
-                    <button @click="deleteProduct(product.id)" class="text-red-600 hover:text-red-900">حذف</button>
+                    <button @click="deleteProduct(product.ID)" class="text-red-600 hover:text-red-900">حذف</button>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                     {{ formatDate(product.created_at) }}
