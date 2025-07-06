@@ -95,7 +95,7 @@ const addProduct = async () => {
 
 // Delete product
 const deleteProduct = async (productId: number) => {
-    $fetch(`/api/product/${productId}`, {
+    $fetch(`/api/product/delete?id=${productId}`, {
       method: 'DELETE'
     })
     .then((response: any) => {
@@ -106,7 +106,11 @@ const deleteProduct = async (productId: number) => {
         showMessage(response.message || 'خطا در حذف محصول', 'error')
       }
     })
-  }
+    .catch((error) => {
+      console.error('Error deleting product:', error)
+      showMessage('خطا در حذف محصول', 'error')
+    })
+}
 
 // Reset form
 const resetForm = () => {

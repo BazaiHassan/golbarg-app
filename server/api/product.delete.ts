@@ -1,7 +1,9 @@
 // product.delete.ts
 export default defineEventHandler(async (event) => {
     try {
-        const productId = event.context.params?.id; // Get the product ID from the request parameters
+        // Get id from query parameters instead of route parameters
+        const query = getQuery(event);
+        const productId = Number(query.id);
 
         if (!productId) {
             setResponseStatus(event, 400);
