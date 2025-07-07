@@ -2,8 +2,11 @@
 import { useProducts } from '~/composables/useProducts';
 import ProductCard from './ProductCard.vue';
 
-const { getAllProducts } = useProducts()
-const products = getAllProducts()
+const { getAllProducts, isLoadingProducts, products } = useProducts()
+// Fetch products when the component is mounted
+onMounted(() => {
+    getAllProducts()
+})
 </script>
 
 <template>
@@ -18,8 +21,9 @@ const products = getAllProducts()
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <ProductCard 
                 v-for="product in products" 
-                :key="product.id" 
-                :image="product.image" 
+                :key="product.ID" 
+                :ID="product.ID"
+                :image="product.image_url" 
                 :title="product.title" 
                 :price="product.price" 
                 :description="product.description"

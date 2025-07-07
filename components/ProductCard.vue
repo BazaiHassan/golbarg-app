@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 
 defineProps<{
+  ID: number
   title: string
   price: string
   image: string
@@ -35,9 +36,16 @@ defineProps<{
       </CardDescription>
     </CardContent>
     <CardFooter class="p-4 pt-0">
-      <span class="text-xl font-bold text-primary">
-        ${{ price }}
-      </span>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm text-gray-500">قیمت:</span>
+        <span class="text-sm text-gray-500">تومان ${{ price }}</span>
+      </div>
+      <NuxtLink 
+        :to="`/product/${ID}`" 
+        class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+      >
+        مشاهده جزئیات
+      </NuxtLink>
     </CardFooter>
   </Card>
 </template>
