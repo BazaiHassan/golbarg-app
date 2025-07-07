@@ -169,7 +169,7 @@ const closeMobileMenu = () => {
             </li>
             <li>
               <NuxtLink
-                to="#"
+                to="/golbarg-ai"
                 @click="closeMobileMenu"
                 class="block px-4 py-3 rounded-md hover:bg-gray-100 transition-colors"
               >

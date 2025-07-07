@@ -80,7 +80,13 @@ const addProduct = async () => {
     })
 
     if (response.status === 'success') {
-      showMessage(response.message || 'محصول با موفقیت اضافه شد', 'success')
+      toast.success(response.message || 'محصول با موفقیت اضافه شد', {
+        style: {
+          background: '#4CAF50',
+        },
+        position: 'top-right',
+        duration: 3000,
+      })
       resetForm()
       await fetchProducts() // Refresh the product list
     } else {
@@ -101,7 +107,13 @@ const deleteProduct = async (productId: number) => {
     })
     .then((response: any) => {
       if (response.status === 'success') {
-        toast.success(response.message || 'محصول با موفقیت حذف شد')
+        toast.success(response.message || 'محصول با موفقیت حذف شد', {
+            style: {
+              background: '#4CAF50',
+            },
+          position: 'top-right',
+          duration: 3000,
+        })
         fetchProducts() // Refresh the product list
       } else {
         showMessage(response.message || 'خطا در حذف محصول', 'error')

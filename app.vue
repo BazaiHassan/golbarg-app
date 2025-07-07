@@ -3,7 +3,11 @@
     <NuxtPage />
      <!-- Nuxt  -->
 
-    <Toaster dir="rtl" class="pointer-events-auto" />
+    <Toaster :toast-options="{
+      style:{
+        fontFamily: 'irSans',
+      }
+    }" dir="rtl" class="pointer-events-auto" />
 
   </main>
 </template>

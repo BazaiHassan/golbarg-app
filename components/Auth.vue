@@ -47,6 +47,9 @@ function handleLogin() {
       // Handle successful login
       successMessage.value = "ورود با موفقیت انجام شد.";
       toast.success(successMessage.value, {
+        style:{
+          background: '#4CAF50',
+        },
         position: 'top-right',
         duration: 3000,
       });
@@ -63,6 +66,9 @@ function handleLogin() {
       // Handle login error
       errorMessage.value = response.message || "ورود ناموفق بود.";
       toast.error(errorMessage.value, {
+                style:{
+          background: '#F44336',
+        },
         position: 'top-right',
         duration: 3000,
       });
@@ -72,6 +78,9 @@ function handleLogin() {
       // Handle undefined response
       errorMessage.value = "خطا در ارتباط با سرور.";
       toast.error(errorMessage.value, {
+                        style:{
+          background: '#F44336',
+        },
         position: 'top-right',
         duration: 3000,
       });
@@ -82,6 +91,9 @@ function handleLogin() {
     // Handle network or other errors
     errorMessage.value = "خطا در ارتباط با سرور: " + error.message;
     toast.error(errorMessage.value, {
+                      style:{
+          background: '#F44336',
+        },
       position: 'top-right',
       duration: 3000,
     });
