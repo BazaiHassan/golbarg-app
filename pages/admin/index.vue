@@ -95,6 +95,7 @@ const addProduct = async () => {
 
 // Delete product
 const deleteProduct = async (productId: number) => {
+    submitLoading.value = true
     $fetch(`/api/product?id=${productId}`, {
       method: 'DELETE'
     })
@@ -105,8 +106,11 @@ const deleteProduct = async (productId: number) => {
       } else {
         showMessage(response.message || 'خطا در حذف محصول', 'error')
       }
+    }).finally(() => {
+      submitLoading.value = false
     })
     .catch((error) => {
+        submitLoading.value = false
       console.error('Error deleting product:', error)
       showMessage('خطا در حذف محصول', 'error')
     })
@@ -158,7 +162,7 @@ onMounted(() => {
       <!-- Tabs -->
       <div class="mb-6">
         <div class="border-b border-gray-200">
-          <nav class="-mb-px flex space-x-8 space-x-reverse">
+          <nav class="-mb-px flex gap-4 items-center justify-end">
             <button
               @click="activeTab = 'products'"
               :class="[
@@ -171,17 +175,6 @@ onMounted(() => {
               محصولات
             </button>
             <button
-              @click="activeTab = 'categories'"
-              :class="[
-                'py-2 px-1 border-b-2 font-medium text-sm',
-                activeTab === 'categories'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              ]"
-            >
-              دسته‌بندی‌ها
-            </button>
-            <button
               @click="activeTab = 'orders'"
               :class="[
                 'py-2 px-1 border-b-2 font-medium text-sm',
@@ -192,6 +185,19 @@ onMounted(() => {
             >
               سفارشات
             </button>
+
+                        <button
+              @click="activeTab = 'users'"
+              :class="[
+                'py-2 px-1 border-b-2 font-medium text-sm',
+                activeTab === 'users'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ]"
+            >
+              کاربران
+            </button>
+
           </nav>
         </div>
       </div>
