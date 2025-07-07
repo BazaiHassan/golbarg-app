@@ -156,13 +156,16 @@ onMounted(() => {
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 text-right">پنل مدیریت</h1>
-        <p class="text-gray-600 mt-2 text-right">مدیریت محصولات و سایر بخش‌ها</p>
+        <div class="flex items-center justify-between mt-2">
+            <p class="text-gray-600 text-right">مدیریت محصولات و سایر بخش‌ها</p>
+            <Button variant="destructive" size="lg">خروج از پنل</Button>
+        </div>
       </div>
 
       <!-- Tabs -->
       <div class="mb-6">
         <div class="border-b border-gray-200">
-          <nav class="-mb-px flex gap-4 items-center justify-end">
+          <nav class="-mb-px flex gap-4 items-center justify-start">
             <button
               @click="activeTab = 'products'"
               :class="[
