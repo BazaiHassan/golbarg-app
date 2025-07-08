@@ -1,6 +1,12 @@
 <script lang="ts" setup>
+
+definePageMeta({
+  middleware:'admin-auth-middleware'
+})
+
 import { ref, onMounted, reactive } from 'vue'
 import { toast } from 'vue-sonner'
+
 
 interface Product {
   ID: number

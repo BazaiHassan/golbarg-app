@@ -1,16 +1,9 @@
-import { defineNuxtRouteMiddleware } from '#app'
 import { toast } from 'vue-sonner'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  // Skip middleware for the login page to avoid redirect loop
-  if (to.path === '/admin/login') {
-    return
-  }
 
-  // Check if route is under /admin
-  if (to.path.startsWith('/admin')) {
-    // Get token from localStorage
-    const token = localStorage.getItem('auth_token')
+  const token = localStorage.getItem('auth_token')
+
 
     if (!token) {
       toast.error('crush برای دسترسی به این صفحه باید وارد شوید.', {
@@ -45,5 +38,4 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       })
       return navigateTo('/admin/login')
     }
-  }
 })
