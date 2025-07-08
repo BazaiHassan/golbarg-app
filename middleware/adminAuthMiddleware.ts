@@ -2,7 +2,7 @@ import { toast } from 'vue-sonner'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
 
-  const token = localStorage.getItem('auth_token')
+  const token = useCookie('auth_token')
 
 
     if (!token) {
@@ -23,7 +23,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       })
 
       if (response.status !== 'success') {
-        localStorage.removeItem('auth_token')
+        token.value = ''
+
         toast.error('توکن نامعتبر است. لطفاً دوباره وارد شوید.', {
           position: 'top-right',
           duration: 2000,
@@ -31,7 +32,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         return navigateTo('/admin/login')
       }
     } catch (error) {
-      localStorage.removeItem('auth_token')
+      token.value = ''
       toast.error('خطایی در اعتبارسنجی رخ داد. لطفاً دوباره وارد شوید.', {
         position: 'top-right',
         duration: 2000,
