@@ -1,4 +1,8 @@
 // server/api/upload.post.ts
+import { writeFile, mkdir } from 'fs/promises'
+import { join } from 'path'
+import { existsSync } from 'fs'
+
 export default defineEventHandler(async (event) => {
     try {
         // Check if request method is POST
@@ -26,6 +30,13 @@ export default defineEventHandler(async (event) => {
             url: string
         }> = []
 
+        // Create public/images directory if it doesn't exist
+        const publicImagesPath = join(process.cwd(), 'public', 'images')
+        if (!existsSync(publicImagesPath)) {
+            await mkdir(publicImagesPath, { recursive: true })
+            console.log(`[UPLOAD] Created directory: ${publicImagesPath}`)
+        }
+
         for (const file of files) {
             if (!file.filename) {
                 continue
@@ -43,20 +54,17 @@ export default defineEventHandler(async (event) => {
             console.log(`[UPLOAD] File size: ${file.data.length} bytes`)
             console.log(`[UPLOAD] File type: ${file.type || 'unknown'}`)
 
-            let storageMethod = ''
-            let storagePath = ''
-            let fileUrl = ''
-
             try {
-                // Use assets:public:images since it's working reliably
-                console.log(`[UPLOAD] Saving to assets:public:images`)
-                await useStorage('assets:public:images').setItemRaw(uniqueFilename, file.data)
+                // Save file to public/images directory
+                const filePath = join(publicImagesPath, uniqueFilename)
+                await writeFile(filePath, file.data)
                 
-                storageMethod = 'assets:public:images'
-                storagePath = `assets/public:images/${uniqueFilename}`
-                fileUrl = `/api/images/${uniqueFilename}`
+                const storageMethod = 'public-directory'
+                const storagePath = `public/images/${uniqueFilename}`
+                const fileUrl = `/images/${uniqueFilename}` // Direct public URL
                 
-                console.log(`[UPLOAD] ✅ Successfully saved to assets:public:images`)
+                console.log(`[UPLOAD] ✅ Successfully saved to public directory`)
+                console.log(`[UPLOAD] File path: ${filePath}`)
                 console.log(`[UPLOAD] Storage path: ${storagePath}`)
                 console.log(`[UPLOAD] File URL: ${fileUrl}`)
                 
@@ -67,10 +75,10 @@ export default defineEventHandler(async (event) => {
                     url: fileUrl
                 })
                 
-            } catch (storageError) {
-                console.error(`[UPLOAD] ❌ assets:public:images failed:`, storageError)
+            } catch (saveError) {
+                console.error(`[UPLOAD] ❌ Failed to save file to public directory:`, saveError)
                 
-                // Fallback to data storage
+                // Fallback to data storage if public directory fails
                 try {
                     console.log(`[UPLOAD] Fallback: Saving to data storage`)
                     await useStorage('data').setItem(`images/${uniqueFilename}`, {
@@ -81,9 +89,9 @@ export default defineEventHandler(async (event) => {
                         timestamp: Date.now()
                     })
                     
-                    storageMethod = 'data'
-                    storagePath = `data/images/${uniqueFilename}`
-                    fileUrl = `/api/images/${uniqueFilename}`
+                    const storageMethod = 'data'
+                    const storagePath = `data/images/${uniqueFilename}`
+                    const fileUrl = `/api/images/${uniqueFilename}`
                     
                     console.log(`[UPLOAD] ✅ Successfully saved to data storage`)
                     console.log(`[UPLOAD] Storage path: ${storagePath}`)
