@@ -131,6 +131,7 @@ const loginForm = ref<LoginForm>({
   password: '',
 })
 
+const token = useCookie('auth_token')
 const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
@@ -169,7 +170,7 @@ const handleSubmit = async () => {
 
     // Store token in localStorage or a secure storage mechanism
     if (data.data?.token) {
-      localStorage.setItem('auth_token', data.data.token)
+      token.value = data.data.token
       // Navigate to dashboard or protected route
       await router.push('/admin')
     }
