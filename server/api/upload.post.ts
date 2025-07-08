@@ -1,3 +1,4 @@
+// server/api/upload.post.ts
 export default defineEventHandler(async (event) => {
     try {
         // Check if request method is POST
@@ -18,7 +19,12 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        const uploadedFiles: string[] = []
+        const uploadedFiles: Array<{
+            filename: string,
+            storageMethod: string,
+            storagePath: string,
+            url: string
+        }> = []
 
         for (const file of files) {
             if (!file.filename) {
@@ -32,33 +38,135 @@ export default defineEventHandler(async (event) => {
             const randomId = Math.random().toString(36).substring(2, 8)
             const uniqueFilename = `${baseName}_${timestamp}_${randomId}.${fileExtension}`
 
+            console.log(`[UPLOAD] Processing file: ${file.filename}`)
+            console.log(`[UPLOAD] Generated filename: ${uniqueFilename}`)
+            console.log(`[UPLOAD] File size: ${file.data.length} bytes`)
+            console.log(`[UPLOAD] File type: ${file.type || 'unknown'}`)
+
+            let storageMethod = ''
+            let storagePath = ''
+            let fileUrl = ''
+
             try {
-                // Use Nitro's storage layer instead of fs
+                // Method 1: Try Nitro's public assets storage
+                console.log(`[UPLOAD] Attempting to save to assets:public:images`)
                 await useStorage('assets:public:images').setItemRaw(uniqueFilename, file.data)
-                uploadedFiles.push(uniqueFilename)
-            } catch (storageError) {
-                console.error('Storage error:', storageError)
                 
-                // Fallback: try to save to public directory using hubBlob if available
+                storageMethod = 'assets:public:images'
+                storagePath = `assets/public/images/${uniqueFilename}`
+                fileUrl = `/images/${uniqueFilename}`
+                
+                console.log(`[UPLOAD] ✅ Successfully saved to assets:public:images`)
+                console.log(`[UPLOAD] Storage path: ${storagePath}`)
+                console.log(`[UPLOAD] File URL: ${fileUrl}`)
+                
+                uploadedFiles.push({
+                    filename: uniqueFilename,
+                    storageMethod,
+                    storagePath,
+                    url: fileUrl
+                })
+                
+            } catch (storageError) {
+                console.error(`[UPLOAD] ❌ assets:public:images failed:`, storageError)
+                
                 try {
-                    // For deployment environments that support blob storage
-                    const blob = new Blob([file.data], { type: file.type || 'image/jpeg' })
+                    // Method 2: Try public directory storage
+                    console.log(`[UPLOAD] Attempting to save to assets:public`)
+                    await useStorage('assets:public').setItemRaw(`images/${uniqueFilename}`, file.data)
                     
-                    // Store in runtime storage as fallback
-                    await useStorage('data').setItem(`images/${uniqueFilename}`, {
-                        data: Array.from(file.data),
+                    storageMethod = 'assets:public'
+                    storagePath = `assets/public/images/${uniqueFilename}`
+                    fileUrl = `/images/${uniqueFilename}`
+                    
+                    console.log(`[UPLOAD] ✅ Successfully saved to assets:public`)
+                    console.log(`[UPLOAD] Storage path: ${storagePath}`)
+                    console.log(`[UPLOAD] File URL: ${fileUrl}`)
+                    
+                    uploadedFiles.push({
                         filename: uniqueFilename,
-                        type: file.type || 'image/jpeg',
-                        size: file.data.length
+                        storageMethod,
+                        storagePath,
+                        url: fileUrl
                     })
                     
-                    uploadedFiles.push(uniqueFilename)
-                } catch (fallbackError) {
-                    console.error('Fallback storage error:', fallbackError)
-                    throw createError({
-                        statusCode: 500,
-                        statusMessage: 'Failed to save file'
-                    })
+                } catch (publicError) {
+                    console.error(`[UPLOAD] ❌ assets:public failed:`, publicError)
+                    
+                    try {
+                        // Method 3: Try data storage as fallback
+                        console.log(`[UPLOAD] Attempting to save to data storage`)
+                        await useStorage('data').setItem(`images/${uniqueFilename}`, {
+                            data: Array.from(file.data),
+                            filename: uniqueFilename,
+                            type: file.type || 'image/jpeg',
+                            size: file.data.length,
+                            timestamp: Date.now()
+                        })
+                        
+                        storageMethod = 'data'
+                        storagePath = `data/images/${uniqueFilename}`
+                        fileUrl = `/api/images/${uniqueFilename}`
+                        
+                        console.log(`[UPLOAD] ✅ Successfully saved to data storage`)
+                        console.log(`[UPLOAD] Storage path: ${storagePath}`)
+                        console.log(`[UPLOAD] File URL: ${fileUrl}`)
+                        
+                        uploadedFiles.push({
+                            filename: uniqueFilename,
+                            storageMethod,
+                            storagePath,
+                            url: fileUrl
+                        })
+                        
+                    } catch (dataError) {
+                        console.error(`[UPLOAD] ❌ data storage failed:`, dataError)
+                        
+                        try {
+                            // Method 4: Try filesystem storage (for local development)
+                            console.log(`[UPLOAD] Attempting to save to filesystem`)
+                            const fs = await import('fs').catch(() => null)
+                            const path = await import('path').catch(() => null)
+                            
+                            if (fs && path) {
+                                const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+                                
+                                // Create directory if it doesn't exist
+                                if (!fs.existsSync(uploadsDir)) {
+                                    fs.mkdirSync(uploadsDir, { recursive: true })
+                                }
+                                
+                                const filePath = path.join(uploadsDir, uniqueFilename)
+                                fs.writeFileSync(filePath, file.data)
+                                
+                                storageMethod = 'filesystem'
+                                storagePath = `public/uploads/${uniqueFilename}`
+                                fileUrl = `/uploads/${uniqueFilename}`
+                                
+                                console.log(`[UPLOAD] ✅ Successfully saved to filesystem`)
+                                console.log(`[UPLOAD] Storage path: ${storagePath}`)
+                                console.log(`[UPLOAD] File URL: ${fileUrl}`)
+                                
+                                uploadedFiles.push({
+                                    filename: uniqueFilename,
+                                    storageMethod,
+                                    storagePath,
+                                    url: fileUrl
+                                })
+                            } else {
+                                throw new Error('Filesystem not available')
+                            }
+                            
+                        } catch (fsError) {
+                            console.error(`[UPLOAD] ❌ filesystem failed:`, fsError)
+                            console.error(`[UPLOAD] All storage methods failed for file: ${uniqueFilename}`)
+                            
+                            throw createError({
+                                statusCode: 500,
+                                statusMessage: 'Failed to save file - all storage methods failed'
+                            })
+                        }
+                    }
                 }
             }
         }
@@ -70,15 +178,25 @@ export default defineEventHandler(async (event) => {
             })
         }
 
+        // Log final results
+        console.log(`[UPLOAD] Final results:`)
+        uploadedFiles.forEach((file, index) => {
+            console.log(`[UPLOAD] File ${index + 1}:`)
+            console.log(`  - Filename: ${file.filename}`)
+            console.log(`  - Storage method: ${file.storageMethod}`)
+            console.log(`  - Storage path: ${file.storagePath}`)
+            console.log(`  - URL: ${file.url}`)
+        })
+
         return {
             success: true,
             message: "Files uploaded successfully",
             files: uploadedFiles
         }
     } catch (error) {
-        console.error('Upload error:', error)
+        console.error('[UPLOAD] Upload error:', error)
         
-        if (error.statusCode) {
+        if (typeof error === 'object' && error !== null && 'statusCode' in error) {
             throw error
         }
         
