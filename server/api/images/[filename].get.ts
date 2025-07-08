@@ -20,13 +20,13 @@ export default defineEventHandler(async (event) => {
                 key: filename
             },
             {
-                name: 'assets:public',
-                storage: 'assets:public',
+                name: 'data',
+                storage: 'data',
                 key: `images/${filename}`
             },
             {
-                name: 'data',
-                storage: 'data',
+                name: 'assets:public',
+                storage: 'assets:public',
                 key: `images/${filename}`
             }
         ]
@@ -43,9 +43,9 @@ export default defineEventHandler(async (event) => {
                         fileData &&
                         typeof fileData === 'object' &&
                         'data' in fileData &&
-                        Array.isArray((fileData as any).data)
+                        fileData.data
                     ) {
-                        const typedFileData = fileData as { data: number[]; type?: string; size: number }
+                        const typedFileData = fileData as { data: ArrayLike<number>, type?: string, size: number }
                         console.log(`[IMAGE_SERVE] ✅ Found in ${option.name}`)
                         console.log(`[IMAGE_SERVE] File type: ${typedFileData.type}`)
                         console.log(`[IMAGE_SERVE] File size: ${typedFileData.size}`)
@@ -77,7 +77,7 @@ export default defineEventHandler(async (event) => {
                         setHeader(event, 'Cache-Control', 'public, max-age=31536000') // 1 year
                         
                         if (imageData.length) {
-                            setHeader(event, 'Content-Length', imageData.length)
+                            setHeader(event, 'Content-Length', imageData.length.toString())
                         }
                         
                         return imageData
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
                 
             } catch (storageError) {
                 if (storageError && typeof storageError === 'object' && 'message' in storageError) {
-                    console.log(`[IMAGE_SERVE] ❌ Error accessing ${option.name}:`, (storageError as any).message)
+                    console.log(`[IMAGE_SERVE] ❌ Error accessing ${option.name}:`, (storageError as { message: string }).message)
                 } else {
                     console.log(`[IMAGE_SERVE] ❌ Error accessing ${option.name}:`, storageError)
                 }
@@ -96,37 +96,7 @@ export default defineEventHandler(async (event) => {
             }
         }
 
-        // If not found in any storage, try filesystem as last resort
-        try {
-            console.log(`[IMAGE_SERVE] Trying filesystem storage`)
-            const fs = await import('fs').catch(() => null)
-            const path = await import('path').catch(() => null)
-            
-            if (fs && path) {
-                const filePath = path.join(process.cwd(), 'public', 'uploads', filename)
-                
-                if (fs.existsSync(filePath)) {
-                    console.log(`[IMAGE_SERVE] ✅ Found in filesystem: ${filePath}`)
-                    
-                    const imageData = fs.readFileSync(filePath)
-                    const ext = filename.split('.').pop()?.toLowerCase()
-                    const contentType = getContentType(ext)
-                    
-                    setHeader(event, 'Content-Type', contentType)
-                    setHeader(event, 'Content-Length', imageData.length)
-                    setHeader(event, 'Cache-Control', 'public, max-age=31536000') // 1 year
-                    
-                    return imageData
-                }
-            }
-        } catch (fsError) {
-            if (fsError && typeof fsError === 'object' && 'message' in fsError) {
-                console.log(`[IMAGE_SERVE] ❌ Filesystem error:`, (fsError as any).message)
-            } else {
-                console.log(`[IMAGE_SERVE] ❌ Filesystem error:`, fsError)
-            }
-        }
-
+        // If not found in any storage, file doesn't exist
         console.log(`[IMAGE_SERVE] ❌ File not found in any storage location: ${filename}`)
         
         throw createError({
