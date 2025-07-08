@@ -70,7 +70,7 @@ const uploadImage = async (event: Event) => {
     
     if (response.success && response.files && response.files[0]) {
       const uploadedFileName = response.files[0]
-      productForm.image_url = `https://golbargai.ir/images/${uploadedFileName}`
+      productForm.image_url = `https://golbargai.ir/api/images/${uploadedFileName}`
       
       toast.success('تصویر با موفقیت آپلود شد', {
         style: {

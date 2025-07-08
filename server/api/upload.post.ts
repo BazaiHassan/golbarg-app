@@ -1,7 +1,3 @@
-import path from "path"
-import fs from "fs"
-import { createError } from 'h3'
-
 export default defineEventHandler(async (event) => {
     try {
         // Check if request method is POST
@@ -22,12 +18,6 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        // Create images directory if it doesn't exist
-        const imagesDir = path.join(process.cwd(), 'public/images')
-        if (!fs.existsSync(imagesDir)) {
-            fs.mkdirSync(imagesDir, { recursive: true })
-        }
-
         const uploadedFiles: string[] = []
 
         for (const file of files) {
@@ -36,25 +26,38 @@ export default defineEventHandler(async (event) => {
             }
 
             // Generate unique filename to prevent conflicts
-            const fileExtension = path.extname(file.filename)
-            const baseName = path.basename(file.filename, fileExtension)
+            const fileExtension = file.filename.split('.').pop() || ''
+            const baseName = file.filename.replace(/\.[^/.]+$/, '')
             const timestamp = Date.now()
-            const uniqueFilename = `${baseName}_${timestamp}${fileExtension}`
+            const randomId = Math.random().toString(36).substring(2, 8)
+            const uniqueFilename = `${baseName}_${timestamp}_${randomId}.${fileExtension}`
 
-            const filePath = path.join(imagesDir, uniqueFilename)
+            // Convert buffer to base64 for storage (temporary solution)
+            const base64Data = Buffer.from(file.data).toString('base64')
             
-            // Write file to disk
-            fs.writeFileSync(filePath, file.data)
+            // Store file info in runtime storage (this is temporary and will be lost on restart)
+            await useStorage('data').setItem(`images/${uniqueFilename}`, {
+                data: base64Data,
+                filename: uniqueFilename,
+                type: file.type || 'image/jpeg',
+                size: file.data.length
+            })
+            
             uploadedFiles.push(uniqueFilename)
         }
 
         return {
             success: true,
             message: "Files uploaded successfully",
-            files: uploadedFiles
+            files: uploadedFiles,
+            note: "Files are stored temporarily and will be lost on server restart"
         }
     } catch (error) {
         console.error('Upload error:', error)
+        
+        if (error.statusCode) {
+            throw error
+        }
         
         throw createError({
             statusCode: 500,
