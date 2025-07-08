@@ -63,16 +63,12 @@ const uploadImage = async (event: Event) => {
     const formData = new FormData()
     formData.append('file', file)
     
-    interface UploadResponse {
-      files?: string[]
-      [key: string]: any
-    }
-    const response = await $fetch<UploadResponse>('/api/upload', {
+    const response = await $fetch('/api/upload', {
       method: 'POST',
       body: formData
     })
     
-    if (response.files && response.files[0]) {
+    if (response.success && response.files && response.files[0]) {
       const uploadedFileName = response.files[0]
       productForm.image_url = `https://golbargai.ir/images/${uploadedFileName}`
       
@@ -86,9 +82,19 @@ const uploadImage = async (event: Event) => {
     } else {
       showMessage('خطا در آپلود تصویر', 'error')
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error)
-    showMessage('خطا در آپلود تصویر', 'error')
+    
+    // Handle different error types
+    if (error.statusCode === 400) {
+      showMessage('هیچ فایلی انتخاب نشده است', 'error')
+    } else if (error.statusCode === 405) {
+      showMessage('روش درخواست نامعتبر است', 'error')
+    } else if (error.statusCode === 500) {
+      showMessage('خطای سرور در آپلود تصویر', 'error')
+    } else {
+      showMessage('خطا در آپلود تصویر', 'error')
+    }
   } finally {
     uploadLoading.value = false
   }
