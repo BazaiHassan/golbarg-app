@@ -47,13 +47,17 @@ const uploadImage = async (event: Event) => {
   
   // Validate file type
   if (!file.type.startsWith('image/')) {
-    showMessage('لطفا فقط فایل تصویر انتخاب کنید', 'error')
+    toast.error('لطفا فقط فایل تصویر انتخاب کنید', {
+      position: 'top-right'
+    })
     return
   }
   
   // Validate file size (max 5MB)
   if (file.size > 5 * 1024 * 1024) {
-    showMessage('حجم فایل نباید بیش از 5 مگابایت باشد', 'error')
+    toast.error('حجم فایل نباید بیش از 5 مگابایت باشد', {
+      position: 'top-right'
+    })
     return
   }
   
@@ -69,37 +73,26 @@ const uploadImage = async (event: Event) => {
     })
     
     if (response.success && response.files && response.files[0]) {
-      const uploadedFileName = response.files[0]
-      productForm.image_url = `https://golbargai.ir/api/images/${uploadedFileName}`
+      const uploadedFile = response.files[0]
+      productForm.image_url = uploadedFile.url
       
       toast.success('تصویر با موفقیت آپلود شد', {
-        style: {
-          background: '#4CAF50',
-        },
-        position: 'top-right',
-        duration: 3000,
+        position: 'top-right'
       })
     } else {
-      showMessage('خطا در آپلود تصویر', 'error')
+      toast.error('خطا در آپلود تصویر', {
+        position: 'top-right'
+      })
     }
   } catch (error: any) {
     console.error('Upload error:', error)
-    
-    // Handle different error types
-    if (error.statusCode === 400) {
-      showMessage('هیچ فایلی انتخاب نشده است', 'error')
-    } else if (error.statusCode === 405) {
-      showMessage('روش درخواست نامعتبر است', 'error')
-    } else if (error.statusCode === 500) {
-      showMessage('خطای سرور در آپلود تصویر', 'error')
-    } else {
-      showMessage('خطا در آپلود تصویر', 'error')
-    }
+    toast.error('خطا در آپلود تصویر', {
+      position: 'top-right'
+    })
   } finally {
     uploadLoading.value = false
   }
 }
-
 // Fetch all products
 interface ProductsApiResponse {
   status: string

@@ -17,7 +17,19 @@ export default defineNuxtConfig({
           bindingName:"golbargai-db-link"
         }
       }
-    }
+    },
+    storage: {
+      'uploads': {
+        driver: 'fs',
+        base: './public/uploads'
+      }
+    },
+    publicAssets: [
+      {
+        baseURL: '/uploads',
+        dir: './public/uploads'
+      }
+    ]
   },
   vite: {
     plugins: [
