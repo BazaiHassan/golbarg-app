@@ -45,17 +45,16 @@ const uploadImage = async (event: Event) => {
   
   if (!file) return
   
-  // Validate file type
+  // Validate file
   if (!file.type.startsWith('image/')) {
-    toast.error('لطفا فقط فایل تصویر انتخاب کنید', {
+    toast.error('فقط فایل‌های تصویری مجاز هستند', {
       position: 'top-right'
     })
     return
   }
   
-  // Validate file size (max 5MB)
   if (file.size > 5 * 1024 * 1024) {
-    toast.error('حجم فایل نباید بیش از 5 مگابایت باشد', {
+    toast.error('حداکثر حجم فایل 5 مگابایت است', {
       position: 'top-right'
     })
     return
@@ -72,20 +71,16 @@ const uploadImage = async (event: Event) => {
       body: formData
     })
     
-    if (response.success && response.files && response.files[0]) {
-      const uploadedFile = response.files[0]
-      productForm.image_url = uploadedFile.url
-      
+    if (response.success && response.files?.[0]?.url) {
+      productForm.image_url = response.files[0].url
       toast.success('تصویر با موفقیت آپلود شد', {
         position: 'top-right'
       })
     } else {
-      toast.error('خطا در آپلود تصویر', {
-        position: 'top-right'
-      })
+      throw new Error('Invalid response from server')
     }
-  } catch (error: any) {
-    console.error('Upload error:', error)
+  } catch (error) {
+    console.error('Upload failed:', error)
     toast.error('خطا در آپلود تصویر', {
       position: 'top-right'
     })

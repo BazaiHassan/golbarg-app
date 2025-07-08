@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   try {
-    // Check if request method is POST
+    // Verify request method
     if (event.method !== 'POST') {
       throw createError({
         statusCode: 405,
@@ -10,8 +10,7 @@ export default defineEventHandler(async (event) => {
 
     // Read multipart form data
     const files = await readMultipartFormData(event)
-
-    if (!files || files.length === 0) {
+    if (!files?.length) {
       throw createError({
         statusCode: 400,
         statusMessage: 'No files uploaded'
@@ -24,19 +23,19 @@ export default defineEventHandler(async (event) => {
       if (!file.filename) continue
 
       // Generate unique filename
-      const ext = file.filename.split('.').pop()
+      const ext = file.filename.split('.').pop() || 'bin'
       const baseName = file.filename.replace(/\.[^/.]+$/, '')
-      const uniqueFilename = `${baseName}_${Date.now()}.${ext}`
+      const uniqueFilename = `${baseName}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`
 
-      // Store the file using Nitro storage
-      await useStorage().setItem(`uploads:${uniqueFilename}`, file.data)
+      // Store using Nitro storage
+      await useStorage().setItem(`uploads/${uniqueFilename}`, file.data)
 
       uploadedFiles.push({
-        originalFilename: file.filename,
+        originalName: file.filename,
         filename: uniqueFilename,
         size: file.data.length,
         type: file.type,
-        url: `/api/uploads/${uniqueFilename}`
+        url: `/api/uploads/${uniqueFilename}` // This will be served by our separate endpoint
       })
     }
 
@@ -45,12 +44,12 @@ export default defineEventHandler(async (event) => {
       files: uploadedFiles
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error)
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Upload failed'
+      statusCode: error.statusCode || 500,
+      statusMessage: error.statusMessage || 'Internal Server Error',
+      message: error.message || 'Failed to process upload'
     })
   }
 })

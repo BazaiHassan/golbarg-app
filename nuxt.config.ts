@@ -4,24 +4,24 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
-  css: ["~/assets/css/tailwind.css","~/assets/css/fonts.css"],
+  css: ["~/assets/css/tailwind.css", "~/assets/css/fonts.css"],
   nitro: {
-    preset:"cloudflare-pages",
-    experimental:{
-      database:true
+    preset: "cloudflare-pages",
+    experimental: {
+      database: true
     },
-    database:{
-      golbargDB:{
-        connector:"cloudflare-d1",
-        options:{
-          bindingName:"golbargai-db-link"
+    database: {
+      golbargDB: {
+        connector: "cloudflare-d1",
+        options: {
+          bindingName: "golbargai-db-link"
         }
       }
     },
     storage: {
       'uploads': {
         driver: 'fs',
-        base: './public/uploads'
+        base: './.data/uploads'
       }
     },
     publicAssets: [
