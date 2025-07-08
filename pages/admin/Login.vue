@@ -14,7 +14,7 @@
 
       <!-- Login Form -->
       <div class="bg-white/10 irSans backdrop-blur-md rounded-2xl shadow-xl p-8 border border-white/20">
-        <form @submit.prevent="handleLogin" class="space-y-6">
+        <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Username Field -->
           <div class="space-y-2">
             <label for="username" class="block text-sm font-medium text-white">
@@ -109,9 +109,20 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 interface LoginForm {
   username: string
   password: string
+}
+
+interface ApiResponse {
+  status: 'success' | 'error'
+  message: string
+  data?: {
+    token: string
+  }
 }
 
 // Reactive state
@@ -123,53 +134,7 @@ const loginForm = ref<LoginForm>({
 const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
-
-// const adminToken = useCookie('adminToken')
-
-
-// Login handler
-// const handleLogin = async () => {
-//   errorMessage.value = ''
-//   isLoading.value = true
-
-//   try {
-//     // Validate form
-//     if (!loginForm.value.username.trim()) {
-//       throw new Error('نام کاربری الزامی است')
-//     }
-    
-//     if (!loginForm.value.password.trim()) {
-//       throw new Error('کلمه عبور الزامی است')
-//     }
-
-//     interface AdminLoginResponse {
-//       status: string
-//       message: string
-//       data?: {
-//         token: string
-//       }
-//     }
-
-//     const response = await $fetch<AdminLoginResponse>('/api/admin', {
-//       method: 'POST',
-//       body: {
-//         username: loginForm.value.username,
-//         password: loginForm.value.password,
-//       }
-//     })
-
-//     if (response.status === 'success' && response.data && response.data.token) {
-//       adminToken.value = response.data.token // Store token in cookie
-//       await navigateTo('/admin')
-//     } else {
-//       throw new Error('نام کاربری یا کلمه عبور اشتباه است')
-//     }
-//   } catch (error) {
-//     errorMessage.value = error instanceof Error ? error.message : 'خطا در ورود به سیستم'
-//   } finally {
-//     isLoading.value = false
-//   }
-// }
+const router = useRouter()
 
 // Clear error message when user starts typing
 watch([() => loginForm.value.username, () => loginForm.value.password], () => {
@@ -177,6 +142,42 @@ watch([() => loginForm.value.username, () => loginForm.value.password], () => {
     errorMessage.value = ''
   }
 })
+
+const handleSubmit = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+
+  try {
+    const response = await fetch('/api/panel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: loginForm.value.username,
+        password: loginForm.value.password,
+      }),
+    })
+
+    const data: ApiResponse = await response.json()
+
+    if (data.status === 'error') {
+      errorMessage.value = data.message
+      isLoading.value = false
+      return
+    }
+
+    // Store token in localStorage or a secure storage mechanism
+    if (data.data?.token) {
+      localStorage.setItem('auth_token', data.data.token)
+      // Navigate to dashboard or protected route
+      await router.push('/admin')
+    }
+  } catch (error) {
+    errorMessage.value = 'خطایی در ارتباط با سرور رخ داد'
+    isLoading.value = false
+  }
+}
 </script>
 
 <style scoped>
