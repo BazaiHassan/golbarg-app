@@ -23,6 +23,7 @@ const activeTab = ref('products')
 const products = ref<Product[]>([])
 const loading = ref(false)
 const submitLoading = ref(false)
+const uploadLoading = ref(false)
 const message = ref('')
 const messageType = ref<'success' | 'error'>('success')
 
@@ -33,6 +34,65 @@ const productForm = reactive<ProductForm>({
   description: '',
   image_url: ''
 })
+
+// File input ref
+const fileInput = ref<HTMLInputElement | null>(null)
+
+// Upload image function
+const uploadImage = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  
+  if (!file) return
+  
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    showMessage('لطفا فقط فایل تصویر انتخاب کنید', 'error')
+    return
+  }
+  
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    showMessage('حجم فایل نباید بیش از 5 مگابایت باشد', 'error')
+    return
+  }
+  
+  uploadLoading.value = true
+  
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    interface UploadResponse {
+      files?: string[]
+      [key: string]: any
+    }
+    const response = await $fetch<UploadResponse>('/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+    
+    if (response.files && response.files[0]) {
+      const uploadedFileName = response.files[0]
+      productForm.image_url = `https://golbargai.ir/images/${uploadedFileName}`
+      
+      toast.success('تصویر با موفقیت آپلود شد', {
+        style: {
+          background: '#4CAF50',
+        },
+        position: 'top-right',
+        duration: 3000,
+      })
+    } else {
+      showMessage('خطا در آپلود تصویر', 'error')
+    }
+  } catch (error) {
+    console.error('Upload error:', error)
+    showMessage('خطا در آپلود تصویر', 'error')
+  } finally {
+    uploadLoading.value = false
+  }
+}
 
 // Fetch all products
 interface ProductsApiResponse {
@@ -134,6 +194,11 @@ const resetForm = () => {
   productForm.price = null
   productForm.description = ''
   productForm.image_url = ''
+  
+  // Reset file input
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
 }
 
 // Show message
@@ -256,14 +321,53 @@ onMounted(() => {
               />
             </div>
 
+            <!-- Image Upload Section -->
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1 text-right">URL تصویر</label>
-              <input
-                v-model="productForm.image_url"
-                type="url"
-                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
-                placeholder="آدرس تصویر را وارد کنید"
-              />
+              <label class="block text-sm font-medium text-gray-700 mb-1 text-right">تصویر محصول</label>
+              
+              <!-- File Input -->
+              <div class="flex items-center gap-4 mb-2">
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/*"
+                  @change="uploadImage"
+                  class="hidden"
+                />
+                <button
+                  type="button"
+                  @click="fileInput?.click()"
+                  :disabled="uploadLoading"
+                  class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span v-if="uploadLoading">در حال آپلود...</span>
+                  <span v-else>انتخاب تصویر</span>
+                </button>
+                
+                <span class="text-sm text-gray-500">
+                  حداکثر حجم: 5MB | فرمت‌های مجاز: JPG, PNG, GIF
+                </span>
+              </div>
+
+              <!-- Image Preview -->
+              <div v-if="productForm.image_url" class="mt-2">
+                <img
+                  :src="productForm.image_url"
+                  alt="پیش‌نمایش تصویر"
+                  class="h-32 w-32 object-cover rounded-lg border border-gray-300"
+                />
+              </div>
+
+              <!-- Manual URL Input (Optional) -->
+              <div class="mt-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1 text-right">یا URL تصویر را وارد کنید</label>
+                <input
+                  v-model="productForm.image_url"
+                  type="url"
+                  class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
             </div>
 
             <div class="md:col-span-2">
@@ -279,7 +383,7 @@ onMounted(() => {
             <div class="md:col-span-2 flex justify-start gap-4">
               <button
                 type="submit"
-                :disabled="submitLoading"
+                :disabled="submitLoading || uploadLoading"
                 class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span v-if="submitLoading">در حال افزودن...</span>
