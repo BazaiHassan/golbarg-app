@@ -45,7 +45,7 @@ const uploadImage = async (event: Event) => {
   
   if (!file) return
   
-  // Validate file
+  // Validate file type
   if (!file.type.startsWith('image/')) {
     toast.error('فقط فایل‌های تصویری مجاز هستند', {
       position: 'top-right'
@@ -53,6 +53,7 @@ const uploadImage = async (event: Event) => {
     return
   }
   
+  // Validate file size (max 5MB)
   if (file.size > 5 * 1024 * 1024) {
     toast.error('حداکثر حجم فایل 5 مگابایت است', {
       position: 'top-right'
@@ -76,8 +77,6 @@ const uploadImage = async (event: Event) => {
       toast.success('تصویر با موفقیت آپلود شد', {
         position: 'top-right'
       })
-    } else {
-      throw new Error('Invalid response from server')
     }
   } catch (error) {
     console.error('Upload failed:', error)
