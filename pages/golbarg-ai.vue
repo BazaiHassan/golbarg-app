@@ -378,8 +378,10 @@ const confidenceColor = computed(() => {
         </NuxtLink>
     </div>
     <div class="mt-12 text-center text-gray-500 text-sm">
-      قدرت گرفته از mlgrid.com
-  </div>
+  قدرت گرفته از mlgrid.com<br>
+  کپی رایت هوش گستران ابر پرداز
+</div>
+
   </div>
 
 </template>
