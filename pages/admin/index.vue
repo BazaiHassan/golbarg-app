@@ -45,6 +45,7 @@ const productForm = reactive<ProductForm>({
 const fileInput = ref<HTMLInputElement | null>(null)
 
 // Upload image function
+/*
 const uploadImage = async (event: Event) => {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -93,6 +94,7 @@ const uploadImage = async (event: Event) => {
     uploadLoading.value = false
   }
 }
+  */
 // Fetch all products
 interface ProductsApiResponse {
   status: string
@@ -265,7 +267,7 @@ onMounted(() => {
               سفارشات
             </button>
 
-                        <button
+            <button
               @click="activeTab = 'users'"
               :class="[
                 'py-2 px-1 border-b-2 font-medium text-sm',
@@ -330,13 +332,14 @@ onMounted(() => {
                   ref="fileInput"
                   type="file"
                   accept="image/*"
-                  @change="uploadImage"
+                  @change=""
                   class="hidden"
                 />
+                <!-- :disabled="uploadLoading" -->
                 <button
                   type="button"
                   @click="fileInput?.click()"
-                  :disabled="uploadLoading"
+                  :disabled="true"
                   class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span v-if="uploadLoading">در حال آپلود...</span>
@@ -347,7 +350,7 @@ onMounted(() => {
                   حداکثر حجم: 5MB | فرمت‌های مجاز: JPG, PNG, GIF
                 </span>
               </div>
-
+    
               <!-- Image Preview -->
               <div v-if="productForm.image_url" class="mt-2">
                 <img
