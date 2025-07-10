@@ -482,7 +482,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="postcss" scoped>
+<style lang="css" scoped>
 /* RTL specific styles */
 input[type="number"] {
   direction: ltr;
