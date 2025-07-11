@@ -4,12 +4,12 @@ import ProductCard from './ProductCard.vue';
 import AccessoryCard from './AccessoryCard.vue';
 import { Sparkles, Package, ShoppingBag, TrendingUp } from 'lucide-vue-next';
 
-const { getAllProducts, isLoadingProducts, products } = useProducts()
+// const { getAllProducts, isLoadingProducts, products } = useProducts()
 
-// Fetch products when the component is mounted
-onMounted(() => {
-    getAllProducts()
-})
+// // Fetch products when the component is mounted
+// onMounted(() => {
+//     getAllProducts()
+// })
 </script>
 
 <template>
@@ -63,7 +63,7 @@ onMounted(() => {
             </div>
 
             <!-- Loading State -->
-            <div v-if="isLoadingProducts" class="flex justify-center items-center py-20">
+            <div v-if="true" class="flex justify-center items-center py-20">
                 <div class="relative">
                     <div class="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
                     <div class="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-green-600 rounded-full animate-spin animate-reverse"></div>
@@ -84,7 +84,7 @@ onMounted(() => {
                 
                 <!-- Products Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    <div 
+                    <!-- <div 
                         v-for="(product, index) in products" 
                         :key="product.ID"
                         class="animate-fade-in-up"
@@ -101,17 +101,17 @@ onMounted(() => {
                             :isSale="index % 4 === 0"
                             :originalPrice="index % 4 === 0 ? String(Number(product.price) * 1.2) : undefined"
                         />
-                    </div>
+                    </div> -->
                 </div>
                 
                 <!-- Empty State -->
-                <div v-if="products?.length === 0" class="text-center py-20">
+                <!-- <div v-if="products?.length === 0" class="text-center py-20">
                     <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <Package class="w-12 h-12 text-gray-400" />
                     </div>
                     <h3 class="text-2xl font-bold text-gray-800 mb-2">هنوز محصولی وجود ندارد</h3>
                     <p class="text-gray-600">به زودی محصولات جدید اضافه خواهد شد</p>
-                </div>
+                </div> -->
             </div>
             
             <!-- Call to Action -->
