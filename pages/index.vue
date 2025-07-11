@@ -42,6 +42,10 @@
       <AiHero />
     </div>
 
+    <div>
+      <!-- <Statistics /> -->
+    </div>
+
     <!-- Terarium Section -->
      <div class="mt-12 sm:mt-16 md:mt-20 lg:mt-24 xl:mt-32">
       <Terarium />
@@ -51,6 +55,11 @@
       <div>
         <ProductHome />
       </div>
+
+      <!-- Accessory Section -->
+       <div>
+        <AccessoryHome />
+       </div>
     <!-- Footer Spacer -->
     <div class="flex-grow"></div>
   </div>
