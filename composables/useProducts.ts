@@ -12,12 +12,15 @@ export const useProducts = () => {
       .then((response: any) => {
         if (response.status === 'success') {
           products.value = response.data || []
+          isLoadingProducts.value = false
         } else {
           console.error(response.message || 'خطا در بارگذاری محصولات')
+          isLoadingProducts.value = false
         }
       })
       .catch((error) => {
         console.error('Error fetching products:', error)
+          isLoadingProducts.value = false
       })
   }
   // Initial fetch of products
