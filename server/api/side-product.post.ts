@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
         const requestBody = await readBody(event);
 
         // Validate required fields
-        if (!requestBody.title || !requestBody.price || !requestBody.image_url || !requestBody.description || !requestBody.in_stock) {
+        if (!requestBody.title || !requestBody.price || !requestBody.image_url || !requestBody.description || requestBody.in_stock === undefined) {
             setResponseStatus(event, 400);
             return {
                 status: 'error',
@@ -13,25 +13,28 @@ export default defineEventHandler(async (event) => {
 
         const db = useDatabase('golbargDB');
 
-        // Prepare data for insertion
+        // Prepare data for insertion with all table fields
         const sideProductData = {
             title: requestBody.title.trim(),
-            price: parseFloat(requestBody.price),
             description: requestBody.description.trim(),
-            image_url: requestBody.image_url.trim(),
             in_stock: requestBody.in_stock,
+            price: parseFloat(requestBody.price),
+            image_url: requestBody.image_url.trim(),
+            rate: requestBody.rate ? parseFloat(requestBody.rate) : null,
+            discount: requestBody.discount ? parseFloat(requestBody.discount) : null,
+            shiping_price: requestBody.shiping_price ? parseFloat(requestBody.shiping_price) : null,
             created_at: new Date().toISOString()
         };
 
-        // Insert the new product into the database
-        const addNewProduct = await db.sql`
-            INSERT INTO side_products (title, price, description, image_url,in_stock, created_at) 
-            VALUES (${sideProductData.title}, ${sideProductData.price}, ${sideProductData.description}, ${sideProductData.image_url},${sideProductData.in_stock}, ${sideProductData.created_at})
+        // Insert the new product into the database with all fields
+        const addNewSideProduct = await db.sql`
+            INSERT INTO side_products (title, description, in_stock, price, image_url, rate, discount, shiping_price, created_at) 
+            VALUES (${sideProductData.title}, ${sideProductData.description}, ${sideProductData.in_stock}, ${sideProductData.price}, ${sideProductData.image_url}, ${sideProductData.rate}, ${sideProductData.discount}, ${sideProductData.shiping_price}, ${sideProductData.created_at})
         `;
 
         // Get the inserted product using last_insert_rowid()
         const insertedSideProduct = await db.sql`
-            SELECT id, title, price, description, image_url, in_stock, created_at 
+            SELECT id, title, description, in_stock, price, image_url, rate, discount, shiping_price, created_at 
             FROM side_products 
             WHERE id = last_insert_rowid()
         `;
@@ -59,7 +62,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 500);
         return {
             status: 'error',
-            message: 'خطای سرور: ',
+            message: 'خطای سرور: '
         };
     }
 });
