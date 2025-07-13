@@ -55,7 +55,9 @@ function handleLogin() {
       });
 
       // Store the token in a cookie
-      token.value = response.data.token;
+      if ('data' in response && response.data && response.data.token) {
+        token.value = response.data.token;
+      }
 
       // reload window to reflect changes
       setTimeout(() => {
@@ -123,7 +125,9 @@ function handleRegister() {
       });
 
       // Store the token in a cookie
-      token.value = response.data.token;
+      if ('data' in response && response.data && response.data.token) {
+        token.value = response.data.token;
+      }
 
       // reload window to reflect changes
       setTimeout(() => {
